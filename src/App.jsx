@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 const content = {
   Oscillation: {
-    title: "Oscillation",
+    title: "Dynamic System",
     knowledge: `## Negative Feedback Loop\n\n$$
-\\tau_E \cdot \frac{d r_E}{d t} = -r_E - W_{I \to E} \cdot r_I \\
-\\tau_I \cdot \frac{d r_I}{d t} = -r_I + W_{E \to I} \cdot r_E
+\\tau_E \\cdot \\frac{\\mathrm{d} r_E}{\\mathrm{d} t} = -r_E - W_{I \\to E} \\cdot r_I \\\\
+\\tau_I \\cdot \\frac{\\mathrm{d} r_I}{\\mathrm{d} t} = -r_I + W_{E \\to I} \\cdot r_E
 $$`,
     qa: [
       {
