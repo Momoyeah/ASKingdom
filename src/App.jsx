@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const content = {
   Oscillation: {
-    title: "Dynamical Systems",
+    title: "Oscillation",
     knowledge: `## Negative Feedback Loop\n\n$$
 \\tau_E \cdot \frac{d r_E}{d t} = -r_E - W_{I \to E} \cdot r_I \\
 \\tau_I \cdot \frac{d r_I}{d t} = -r_I + W_{E \to I} \cdot r_E
