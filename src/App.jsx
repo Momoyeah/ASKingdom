@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const content = {
   Oscillation: {
@@ -10,69 +10,68 @@ $$`,
     qa: [
       {
         question: "τ（tau）是什么意思？",
-        answer: "τ 是时间常数，表示该神经元群体反应变化的速度。数值越大，反应越慢，系统越“惯性”。"
+        answer: "τ 是时间常数，表示神经元群体反应变化的速度。越大表示响应越慢。"
       },
       {
         question: "r 是什么意思？",
-        answer: "r 表示 firing rate，即神经元群体的平均放电率，是随时间变化的动态变量。"
+        answer: "r 表示 firing rate（放电率），代表一群神经元的活动强度。"
       },
       {
         question: "为什么 rE 前面是负号？",
-        answer: "因为是一个负反馈系统，表示兴奋性神经元的活动会自然衰减，除非有外部输入或循环激励。"
-      },
-      {
-        question: "为什么自抑制衰减用负的 firing rate 来算？为什么是线性的？为什么没有额外参数？",
-        answer: "这是模型的简化设定，线性假设便于分析和计算。实际神经动力学可能是非线性的，但线性能捕捉核心机制。"
-      },
-      {
-        question: "对比这个简化模型和更复杂模型有什么差异？",
-        answer: "复杂模型可能会引入非线性函数（如 sigmoid）、多个群体、随机扰动等，可以模拟更真实的大脑动力学，但分析更困难。"
+        answer: "负号表示神经活动的自然衰减，是负反馈的一部分。"
       }
     ]
   }
 };
 
 export default function App() {
-  const [selectedTopic, setSelectedTopic] = useState("Oscillation");
+  const [selectedTopic, setSelectedTopic] = useState('Oscillation');
   const [openIndex, setOpenIndex] = useState(null);
-  const selected = content[selectedTopic];
+  const topic = content[selectedTopic];
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      <aside style={{ width: 250, borderRight: "1px solid #ccc", padding: 16 }}>
-        <h2>📚 目录</h2>
-        {Object.keys(content).map((topic) => (
+    <div style={{ display: 'flex', height: '100vh', fontFamily: 'Arial, sans-serif' }}>
+      <aside style={{ width: '240px', background: '#f8f9fa', borderRight: '1px solid #ccc', padding: '16px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '12px' }}>📘 目录</h2>
+        {Object.keys(content).map((key) => (
           <button
-            key={topic}
+            key={key}
             onClick={() => {
-              setSelectedTopic(topic);
+              setSelectedTopic(key);
               setOpenIndex(null);
             }}
             style={{
-              display: "block",
-              margin: "8px 0",
-              fontWeight: selectedTopic === topic ? "bold" : "normal"
+              display: 'block',
+              width: '100%',
+              marginBottom: '8px',
+              background: key === selectedTopic ? '#007bff' : 'transparent',
+              color: key === selectedTopic ? 'white' : '#333',
+              border: 'none',
+              textAlign: 'left',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              cursor: 'pointer'
             }}
           >
-            {topic}
+            {key}
           </button>
         ))}
       </aside>
 
-      <main style={{ flex: 1, padding: 24, overflowY: "auto" }}>
-        <h1>{selected.title}</h1>
-        <div style={{ whiteSpace: "pre-wrap", marginBottom: 24 }}>{selected.knowledge}</div>
+      <main style={{ flex: 1, padding: '32px', overflowY: 'auto' }}>
+        <h1 style={{ fontSize: '28px', marginBottom: '24px' }}>{topic.title}</h1>
+        <div style={{ whiteSpace: 'pre-wrap', marginBottom: '24px' }}>{topic.knowledge}</div>
 
-        {selected.qa.map((item, index) => (
-          <div key={index} style={{ marginBottom: 16 }}>
+        {topic.qa.map((item, index) => (
+          <div key={index} style={{ marginBottom: '16px' }}>
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
-              style={{ color: "blue", textDecoration: "underline" }}
+              style={{ color: '#007bff', fontWeight: 'bold', cursor: 'pointer', background: 'none', border: 'none', fontSize: '16px' }}
             >
               ❓ {item.question}
             </button>
             {openIndex === index && (
-              <div style={{ padding: 12, backgroundColor: "#f0f0f0", marginTop: 8 }}>
+              <div style={{ padding: '12px', background: '#f1f3f5', marginTop: '8px', borderRadius: '6px' }}>
                 {item.answer}
               </div>
             )}
