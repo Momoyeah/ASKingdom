@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 const content = {
   Oscillation: {
-    title: "Oscillation",
+    title: "Dynamical Systems",
     knowledge: `## Negative Feedback Loop\n\n$$
-\\tau_E \\cdot \\frac{dr_E}{dt} = -r_E - W_{I \\to E} \\cdot r_I\\\\
-\\tau_I \\cdot \\frac{dr_I}{dt} = -r_I + W_{E \\to I} \\cdot r_E
+\\tau_E \cdot \frac{d r_E}{d t} = -r_E - W_{I \to E} \cdot r_I \\
+\\tau_I \cdot \frac{d r_I}{d t} = -r_I + W_{E \to I} \cdot r_E
 $$`,
     qa: [
       {
@@ -24,7 +24,25 @@ $$`,
   }
 };
 
+function useMathJax() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+    script.async = true;
+    script.onload = () => window.MathJax && window.MathJax.typeset();
+    document.head.appendChild(script);
+    return () => document.head.removeChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (window.MathJax) {
+      window.MathJax.typeset();
+    }
+  });
+}
+
 export default function App() {
+  useMathJax();
   const [selectedTopic, setSelectedTopic] = useState('Oscillation');
   const [openIndex, setOpenIndex] = useState(null);
   const topic = content[selectedTopic];
@@ -60,7 +78,9 @@ export default function App() {
 
       <main style={{ flex: 1, padding: '32px', overflowY: 'auto' }}>
         <h1 style={{ fontSize: '28px', marginBottom: '24px' }}>{topic.title}</h1>
-        <div style={{ whiteSpace: 'pre-wrap', marginBottom: '24px' }}>{topic.knowledge}</div>
+        <div style={{ whiteSpace: 'pre-wrap', marginBottom: '24px' }}>
+          <div dangerouslySetInnerHTML={{ __html: topic.knowledge.replace(/\n/g, '<br/>') }} />
+        </div>
 
         {topic.qa.map((item, index) => (
           <div key={index} style={{ marginBottom: '16px' }}>
