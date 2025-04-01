@@ -149,9 +149,11 @@ export default function App() {
               <div
                 style={{
                   background: "#FFFAF0",
-                  marginTop: "8px",
-                  padding: "16px",
+                  marginTop: "6px",
+                  padding: "12px",
                   borderRadius: "6px",
+                  fontSize: "16px",      
+                  lineHeight: "1.6", 
                 }}
               >
                 <ReactMarkdown
