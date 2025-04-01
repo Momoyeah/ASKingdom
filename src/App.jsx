@@ -84,7 +84,7 @@ export default function App() {
     <div style={{ display: "flex", height: "100vh" }}>
       <aside
         style={{
-          width: "260px",
+          width: "clamp(180px, 25vw, 260px)",
           background: "#f9f9f9",
           padding: "16px",
           overflowY: "auto",
@@ -94,7 +94,7 @@ export default function App() {
         <h2>🧠 目录</h2>
         {toc.map((section) => (
           <div key={section.title}>
-            <div style={{ fontWeight: "bold", marginTop: "16px" }}>{section.title}</div>
+            <div style={{ fontWeight: "bold", marginTop: "24px" }}>{section.title}</div>
             {section.children.map((item) => (
               <button
                 key={item.path}
@@ -105,6 +105,7 @@ export default function App() {
                   display: "block",
                   background: item.path === selected.path ? "#007bff" : "transparent",
                   color: item.path === selected.path ? "white" : "#333",
+                  fontSize: "24px",
                   border: "none",
                   padding: "6px 12px",
                   textAlign: "left",
@@ -137,9 +138,9 @@ export default function App() {
                 fontWeight: "bold",
                 background: "none",
                 border: "none",
-                color: "#007bff",
+                color: "#8B658B",
                 cursor: "pointer",
-                fontSize: "16px",
+                fontSize: "18px",
               }}
             >
               ASK {item.q}
@@ -147,9 +148,9 @@ export default function App() {
             {openMap[item.q] && (
               <div
                 style={{
-                  background: "#f6f6f6",
+                  background: "#FFFAFA",
                   marginTop: "8px",
-                  padding: "12px",
+                  padding: "16px",
                   borderRadius: "6px",
                 }}
               >
