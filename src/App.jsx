@@ -91,7 +91,7 @@ export default function App() {
           borderRight: "1px solid #ddd",
         }}
       >
-        <h2>🧠 目录</h2>
+        <h2>目录</h2>
         {toc.map((section) => (
           <div key={section.title}>
             <div style={{ fontWeight: "bold", marginTop: "24px" }}>{section.title}</div>
@@ -103,9 +103,9 @@ export default function App() {
                 }
                 style={{
                   display: "block",
-                  background: item.path === selected.path ? "#007bff" : "transparent",
+                  background: item.path === selected.path ? "#e0e0e0" : "#000",
                   color: item.path === selected.path ? "white" : "#333",
-                  fontSize: "24px",
+                  fontSize: "14px",
                   border: "none",
                   padding: "6px 12px",
                   textAlign: "left",
