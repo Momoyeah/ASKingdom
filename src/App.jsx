@@ -148,7 +148,7 @@ export default function App() {
             {openMap[item.q] && (
               <div
                 style={{
-                  background: "#FFFAFA",
+                  background: "#FFFAF0",
                   marginTop: "8px",
                   padding: "16px",
                   borderRadius: "6px",
