@@ -5,9 +5,25 @@ import remarkDirective from "remark-directive";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
-import { toc } from "./toc";
-
+// 自动读取所有 Markdown 文件
 const importAllMarkdown = import.meta.glob("./content/**/*.md", { as: "raw", eager: true });
+
+// 自动生成 TOC（支持两级目录：主题/子文件.md）
+const generateTOC = () => {
+  const tree = {};
+  for (const path in importAllMarkdown) {
+    const parts = path.replace("./content/", "").split("/");
+    if (parts.length === 2) {
+      const [section, file] = parts;
+      const title = file.replace(/\.md$/, "");
+      if (!tree[section]) tree[section] = [];
+      tree[section].push({ title, path: `content/${section}/${file}` });
+    }
+  }
+  return Object.entries(tree).map(([section, children]) => ({ title: section, children }));
+};
+
+const toc = generateTOC();
 
 const flattenTOC = (toc) =>
   toc.flatMap((section) =>
@@ -27,37 +43,35 @@ export default function App() {
   const [selected, setSelected] = useState(flatTOC[0]);
   const [openMap, setOpenMap] = useState({});
 
-  const toggleASK = (q) => {
+  const toggleQA = (q) => {
     setOpenMap((prev) => ({ ...prev, [q]: !prev[q] }));
   };
 
-  const parseASK = (raw) => {
+  const parseQA = (raw) => {
     const lines = raw.split("\n");
-    const content = [];
-    let main = "";
-    let currentAsk = null;
-
-    lines.forEach((line) => {
-      if (line.startsWith("【ASK】")) {
-        if (currentAsk) content.push(currentAsk);
-        currentAsk = { q: line.replace("【ASK】", "").trim(), a: "" };
-      } else if (currentAsk && (line.startsWith("\t") || line.startsWith("  "))) {
-        currentAsk.a += line.trimStart() + "\n";
-      } else {
-        if (currentAsk) {
-          content.push(currentAsk);
-          currentAsk = null;
+    const mainLines = [];
+    const qas = [];
+    let i = 0;
+    while (i < lines.length) {
+      if (lines[i].startsWith("ASK")) {
+        const q = lines[i].replace(/^ASK\s*/, "").trim();
+        i++;
+        const aLines = [];
+        while (i < lines.length && (lines[i].startsWith("  ") || lines[i] === "")) {
+          aLines.push(lines[i].replace(/^  /, ""));
+          i++;
         }
-        main += line + "\n";
+        qas.push({ type: "qa", q, a: aLines.join("\n") });
+      } else {
+        mainLines.push(lines[i]);
+        i++;
       }
-    });
-    if (currentAsk) content.push(currentAsk);
-
-    return { main: main.trim(), asks: content };
+    }
+    return { main: mainLines.join("\n"), qas };
   };
 
   const raw = fileMap[selected.path];
-  const { main, asks } = parseASK(raw || "");
+  const { main, qas } = parseQA(raw || "");
 
   useEffect(() => {
     if (window.MathJax) window.MathJax.typeset();
@@ -65,7 +79,15 @@ export default function App() {
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
-      <aside style={{ width: "260px", background: "#f9f9f9", padding: "16px", overflowY: "auto", borderRight: "1px solid #ddd" }}>
+      <aside
+        style={{
+          width: "260px",
+          background: "#f9f9f9",
+          padding: "16px",
+          overflowY: "auto",
+          borderRight: "1px solid #ddd",
+        }}
+      >
         <h2>🧠 目录</h2>
         {toc.map((section) => (
           <div key={section.title}>
@@ -73,7 +95,9 @@ export default function App() {
             {section.children.map((item) => (
               <button
                 key={item.path}
-                onClick={() => setSelected({ title: item.title, path: item.path, section: section.title })}
+                onClick={() =>
+                  setSelected({ title: item.title, path: item.path, section: section.title })
+                }
                 style={{
                   display: "block",
                   background: item.path === selected.path ? "#007bff" : "transparent",
@@ -93,17 +117,19 @@ export default function App() {
         ))}
       </aside>
       <main style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
-        <h1>{selected.section} / {selected.title}</h1>
+        <h1>
+          {selected.section} / {selected.title}
+        </h1>
         <ReactMarkdown
           children={main}
           remarkPlugins={[remarkGfm, remarkDirective]}
           rehypePlugins={[rehypeKatex]}
         />
         <hr />
-        {asks.map((item, index) => (
+        {qas.map((item, index) => (
           <div key={index} style={{ marginBottom: "16px" }}>
             <button
-              onClick={() => toggleASK(item.q)}
+              onClick={() => toggleQA(item.q)}
               style={{
                 fontWeight: "bold",
                 background: "none",
@@ -113,10 +139,17 @@ export default function App() {
                 fontSize: "16px",
               }}
             >
-              【ASK】{item.q}
+              ASK {item.q}
             </button>
             {openMap[item.q] && (
-              <div style={{ background: "#f1f3f5", marginTop: "8px", padding: "12px", borderRadius: "6px" }}>
+              <div
+                style={{
+                  background: "#f6f6f6",
+                  marginTop: "8px",
+                  padding: "12px",
+                  borderRadius: "6px",
+                }}
+              >
                 <ReactMarkdown
                   children={item.a}
                   remarkPlugins={[remarkGfm, remarkDirective]}
