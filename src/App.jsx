@@ -27,29 +27,37 @@ export default function App() {
   const [selected, setSelected] = useState(flatTOC[0]);
   const [openMap, setOpenMap] = useState({});
 
-  const toggleQA = (q) => {
+  const toggleASK = (q) => {
     setOpenMap((prev) => ({ ...prev, [q]: !prev[q] }));
   };
 
-  const parseQA = (raw) => {
-    const blocks = raw.split(/^---$/m);
+  const parseASK = (raw) => {
+    const lines = raw.split("\n");
     const content = [];
     let main = "";
-    blocks.forEach((b) => {
-      const lines = b.trim().split("\n");
-      if (lines[0]?.startsWith("❓")) {
-        const q = lines[0].replace(/^❓\s*/, "");
-        const a = lines.slice(1).join("\n");
-        content.push({ type: "qa", q, a });
+    let currentAsk = null;
+
+    lines.forEach((line) => {
+      if (line.startsWith("【ASK】")) {
+        if (currentAsk) content.push(currentAsk);
+        currentAsk = { q: line.replace("【ASK】", "").trim(), a: "" };
+      } else if (currentAsk && (line.startsWith("\t") || line.startsWith("  "))) {
+        currentAsk.a += line.trimStart() + "\n";
       } else {
-        main += b + "\n\n";
+        if (currentAsk) {
+          content.push(currentAsk);
+          currentAsk = null;
+        }
+        main += line + "\n";
       }
     });
-    return { main, qas: content };
+    if (currentAsk) content.push(currentAsk);
+
+    return { main: main.trim(), asks: content };
   };
 
   const raw = fileMap[selected.path];
-  const { main, qas } = parseQA(raw || "");
+  const { main, asks } = parseASK(raw || "");
 
   useEffect(() => {
     if (window.MathJax) window.MathJax.typeset();
@@ -65,9 +73,7 @@ export default function App() {
             {section.children.map((item) => (
               <button
                 key={item.path}
-                onClick={() =>
-                  setSelected({ title: item.title, path: item.path, section: section.title })
-                }
+                onClick={() => setSelected({ title: item.title, path: item.path, section: section.title })}
                 style={{
                   display: "block",
                   background: item.path === selected.path ? "#007bff" : "transparent",
@@ -94,10 +100,10 @@ export default function App() {
           rehypePlugins={[rehypeKatex]}
         />
         <hr />
-        {qas.map((item, index) => (
+        {asks.map((item, index) => (
           <div key={index} style={{ marginBottom: "16px" }}>
             <button
-              onClick={() => toggleQA(item.q)}
+              onClick={() => toggleASK(item.q)}
               style={{
                 fontWeight: "bold",
                 background: "none",
@@ -107,7 +113,7 @@ export default function App() {
                 fontSize: "16px",
               }}
             >
-              ❓ {item.q}
+              【ASK】{item.q}
             </button>
             {openMap[item.q] && (
               <div style={{ background: "#f1f3f5", marginTop: "8px", padding: "12px", borderRadius: "6px" }}>
