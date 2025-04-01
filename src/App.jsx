@@ -152,7 +152,7 @@ export default function App() {
                   marginTop: "6px",
                   padding: "12px",
                   borderRadius: "6px",
-                  fontSize: "16px",      
+                  fontSize: "14px",      
                   lineHeight: "1.6", 
                 }}
               >
