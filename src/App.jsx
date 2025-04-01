@@ -148,12 +148,8 @@ const parseQA = (raw) => {
             {openMap[item.q] && (
               <div
                 style={{
-                  background: "#FFFAF0",
-                  marginTop: "6px",
-                  padding: "12px",
-                  borderRadius: "6px",
-                  fontSize: "14px",      
-                  lineHeight: "1.6", 
+                  marginLeft: "8px",
+                  marginTop: "4px", 
                 }}
               >
                 <ReactMarkdown
