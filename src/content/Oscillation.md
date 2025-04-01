@@ -1,9 +1,11 @@
-# Oscillation
+# Dynamic System
 
 ## Negative Feedback Loop
 
 $$
 \\tau_E \\cdot \\frac{\\mathrm{d} r_E}{\\mathrm{d} t} = -r_E - W_{I \\to E} \\cdot r_I \\\\
+$$
+$$
 \\tau_I \\cdot \\frac{\\mathrm{d} r_I}{\\mathrm{d} t} = -r_I + W_{E \\to I} \\cdot r_E
 $$
 
