@@ -48,30 +48,30 @@ export default function App() {
   };
 
   const parseQA = (raw) => {
-    const lines = raw.split("\n");
-    const mainLines = [];
-    const qas = [];
-    let i = 0;
-    while (i < lines.length) {
-      if (lines[i].startsWith("ASK")) {
-        const q = lines[i].replace(/^ASK\s*/, "").trim();
-        i++;
-        const aLines = [];
-        while (
-          i < lines.length &&
-          (/^(\\t|  )/.test(lines[i]) || lines[i].trim() === "")
-        ) {
-          aLines.push(lines[i].replace(/^(\t|  )/, ""));
-          i++;
-        }
-        qas.push({ type: "qa", q, a: aLines.join("\n") });
-      } else {
-        mainLines.push(lines[i]);
-        i++;
-      }
+  const lines = raw.split("\n");
+  const qas = [];
+  let main = "";
+  let currentQA = null;
+  let inAnswer = false;
+
+  for (let line of lines) {
+    if (line.startsWith("【ASK】")) {
+      if (currentQA) qas.push(currentQA);
+      currentQA = { q: line.replace("【ASK】", "").trim(), a: "" };
+    } else if (line.includes("<!-- answer -->")) {
+      inAnswer = true;
+    } else if (line.includes("<!-- end -->")) {
+      inAnswer = false;
+    } else if (inAnswer && currentQA) {
+      currentQA.a += line + "\n";
+    } else if (!currentQA) {
+      main += line + "\n";
     }
-    return { main: mainLines.join("\n"), qas };
-  };
+  }
+
+  if (currentQA) qas.push(currentQA);
+  return { main, qas };
+};
 
   const raw = fileMap[selected.path];
   const { main, qas } = parseQA(raw || "");
