@@ -138,7 +138,7 @@ export default function App() {
                 fontWeight: "bold",
                 background: "none",
                 border: "none",
-                color: "#8B658B",
+                color: "#5C4460",
                 cursor: "pointer",
                 fontSize: "18px",
               }}
