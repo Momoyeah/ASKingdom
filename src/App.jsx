@@ -57,8 +57,11 @@ export default function App() {
         const q = lines[i].replace(/^ASK\s*/, "").trim();
         i++;
         const aLines = [];
-        while (i < lines.length && (lines[i].startsWith("  ") || lines[i] === "")) {
-          aLines.push(lines[i].replace(/^  /, ""));
+        while (
+          i < lines.length &&
+          (/^(\\t|  )/.test(lines[i]) || lines[i].trim() === "")
+        ) {
+          aLines.push(lines[i].replace(/^(\t|  )/, ""));
           i++;
         }
         qas.push({ type: "qa", q, a: aLines.join("\n") });
