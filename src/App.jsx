@@ -43,35 +43,35 @@ export default function App() {
   const [selected, setSelected] = useState(flatTOC[0]);
   const [openMap, setOpenMap] = useState({});
 
-const parseQA = (raw) => {
-  const lines = raw.split("\n");
-  const mainLines = [];
-  const qas = [];
-  let i = 0;
+  const toggleQA = (q) => {
+    setOpenMap((prev) => ({ ...prev, [q]: !prev[q] }));
+  };
 
-  while (i < lines.length) {
-    const trimmedLine = lines[i].trim();
-    if (trimmedLine.startsWith("【ASK】") || trimmedLine.startsWith("### ")) {
-      const q = trimmedLine.replace(/^【ASK】|^### /, "").trim();
-      i++;
-      while (i < lines.length && lines[i].trim() === "") i++; // 跳过空行
-      if (lines[i]?.includes("<!-- answer -->")) i++;
-      const aLines = [];
-      while (i < lines.length && !lines[i].includes("<!-- end -->")) {
-        aLines.push(lines[i]);
-        i++;
-      }
-      if (lines[i]?.includes("<!-- end -->")) i++;
-      qas.push({ type: "qa", q, a: aLines.join("\n") });
-    } else {
-      mainLines.push(lines[i]);
-      i++;
+  const parseQA = (raw) => {
+  const lines = raw.split("\n");
+  const qas = [];
+  let main = "";
+  let currentQA = null;
+  let inAnswer = false;
+
+  for (let line of lines) {
+    if (line.startsWith("【ASK】")) {
+      if (currentQA) qas.push(currentQA);
+      currentQA = { q: line.replace("【ASK】", "").trim(), a: "" };
+    } else if (line.includes("<!-- answer -->")) {
+      inAnswer = true;
+    } else if (line.includes("<!-- end -->")) {
+      inAnswer = false;
+    } else if (inAnswer && currentQA) {
+      currentQA.a += line + "\n";
+    } else if (!currentQA) {
+      main += line + "\n";
     }
   }
 
-  return { main: mainLines.join("\n"), qas };
+  if (currentQA) qas.push(currentQA);
+  return { main, qas };
 };
-
 
   const raw = fileMap[selected.path];
   const { main, qas } = parseQA(raw || "");
@@ -148,8 +148,10 @@ const parseQA = (raw) => {
             {openMap[item.q] && (
               <div
                 style={{
-                  marginLeft: "8px",
-                  marginTop: "4px", 
+                  marginTop: "10px",
+                  marginLeft: "16px",
+                  fontSize: "14px",      
+                  lineHeight: "1.6", 
                 }}
               >
                 <ReactMarkdown
