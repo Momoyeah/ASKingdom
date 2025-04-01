@@ -103,8 +103,8 @@ export default function App() {
                 }
                 style={{
                   display: "block",
-                  background: item.path === selected.path ? "#e0e0e0" : "#000",
-                  color: item.path === selected.path ? "white" : "#333",
+                  background: item.path === selected.path ? "#e0e0e0" : "transparent",
+                  color: item.path === selected.path ? "#000" : "#333",
                   fontSize: "14px",
                   border: "none",
                   padding: "6px 12px",
