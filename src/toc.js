@@ -1,5 +1,9 @@
 export const toc = [
   {
+    title: "神经科学的数学原理",
+    children: [
+      { title: "Dynamic System", path: "content/神经科学的数学原理/Dynamic System.md" },
+    ]
     title: "心智的演化与发展",
     children: [
       { title: "概述", path: "content/心智的演化与发展/概述.md" },
